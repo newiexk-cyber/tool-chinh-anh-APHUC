@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any, Callable, Optional
 from PIL import Image, ImageDraw, ImageFont
 
-from src.utils import normalize_vn, get_logger
+from src.utils import normalize_vn, get_logger, check_has_credentials
 
 logger = get_logger("drive_manager")
 
@@ -393,7 +393,7 @@ def download_chon_folder(
     target_dir.mkdir(parents=True, exist_ok=True)
 
     cred_file = Path(credentials_path or "config/credentials.json")
-    if force_mock or not cred_file.exists():
+    if force_mock or not check_has_credentials(cred_file):
         c_label = customer_name or target_dir.parent.name
         logger.info(
             f"[MOCK_DATA] Tải ảnh mô phỏng cho folder {customer_folder_id} vào {target_dir} (Khách: {c_label})..."
@@ -533,7 +533,7 @@ def upload_done_folder(
 
     # Real upload
     cred_file = Path(credentials_path or "config/credentials.json")
-    if not cred_file.exists():
+    if not check_has_credentials(cred_file):
         raise FileNotFoundError(f"Cần file {cred_file} để thực thi upload thật!")
 
     from googleapiclient.http import MediaFileUpload
@@ -645,7 +645,7 @@ def auto_select_and_organize_drive(
     cred_file = Path(credentials_path or "config/credentials.json")
 
     # 2. Xử lý chế độ MOCK (Kiểm thử an toàn khi không có credentials hoặc force_mock)
-    if force_mock or not cred_file.exists():
+    if force_mock or not check_has_credentials(cred_file):
         logger.info(f"[MOCK_DATA] Thực hiện lọc ảnh theo mã {raw_codes} trên mock folder {clean_cid}...")
         mock_files = [
             {"id": f"mock_file_000{i}", "name": f"IMG_{i:04d}.jpg"}

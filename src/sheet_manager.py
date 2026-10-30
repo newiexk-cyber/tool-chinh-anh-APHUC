@@ -240,7 +240,7 @@ def get_spreadsheet_sheet_names(
 
     # Danh sách dự phòng theo lịch thực tế (từ tháng sau đến các tháng trước)
     fallback_tabs = []
-    for offset in range(-1, 8):
+    for offset in range(0, 12):
         m = (now.month - offset - 1) % 12 + 1
         y = now.year + ((now.month - offset - 1) // 12)
         tab_name = f"THÁNG {m:02d}/{y}"
@@ -329,7 +329,7 @@ def load_sheet_data(
         return filter_eligible_jobs(raw, staff_name=staff_name) if only_eligible else raw
 
     cred_file = Path(credentials_path or "config/credentials.json")
-    if not cred_file.exists():
+    if not check_has_credentials(cred_file):
         logger.warning(
             f"Chưa có credentials tại '{cred_file}'. Tự động chuyển sang Mock Data."
         )
@@ -400,7 +400,7 @@ def assign_staff(
         }
 
     cred_file = Path(credentials_path or "config/credentials.json")
-    if not cred_file.exists():
+    if not check_has_credentials(cred_file):
         raise FileNotFoundError(f"Cần file {cred_file} để thực thi ghi dữ liệu thật!")
 
     try:
@@ -464,7 +464,7 @@ def mark_done(
         return True
 
     cred_file = Path(credentials_path or "config/credentials.json")
-    if not cred_file.exists():
+    if not check_has_credentials(cred_file):
         logger.warning(f"Không có {cred_file}, bỏ qua cập nhật DONE trên Sheet.")
         return False
 

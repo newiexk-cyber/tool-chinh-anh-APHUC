@@ -54,6 +54,28 @@ def get_platform() -> str:
     return "other"
 
 
+def check_has_credentials(cred_path: Path | str | None = None) -> bool:
+    """
+    Kiểm tra xem ứng dụng đã có credentials hợp lệ hay chưa:
+    1. Kiểm tra file trên ổ đĩa (Local Windows/macOS).
+    2. Kiểm tra biến Streamlit Secrets khi deploy lên Streamlit Cloud.
+    """
+    if cred_path:
+        p = Path(cred_path)
+        if p.exists() and p.is_file():
+            return True
+    local_p = Path("config/credentials.json")
+    if local_p.exists() and local_p.is_file():
+        return True
+    try:
+        import streamlit as st
+        if hasattr(st, "secrets") and "gcp_service_account" in st.secrets:
+            return True
+    except Exception:
+        pass
+    return False
+
+
 def setup_logging(log_file: Path | str | None = None) -> None:
     """
     Configures application-wide logging with:
