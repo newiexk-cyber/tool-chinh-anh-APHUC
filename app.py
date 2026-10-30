@@ -215,7 +215,7 @@ st.sidebar.markdown("### ⚙️ Cấu Hình & Chốt Chặn An Toàn")
 # 1. Primary Safe Mode Switch
 dry_run_mode = st.sidebar.toggle(
     "🛡️ Chế độ An Toàn (Lưu máy, KHÔNG up Drive)",
-    value=True,
+    value=False,
     help="Khi BẬT: Bot tải ảnh thật và chạy MagiMir lưu vào máy tính. KHÔNG upload lên Drive và KHÔNG đổi trạng thái trên Sheet để bạn kiểm tra trước. Khi TẮT: Sẽ upload lên Drive và đánh dấu DONE trên Sheet.",
 )
 
@@ -234,15 +234,14 @@ else:
         "• Sẽ đổi trạng thái khách thành 'DONE' trên Google Sheet!"
     )
 
-# Credentials Verification
+# Credentials Verification (hỗ trợ cả file local và Streamlit Cloud Secrets)
 credentials_file = ROOT_DIR / "config" / "credentials.json"
-has_credentials = credentials_file.exists()
+has_credentials = credentials_file.exists() or (hasattr(st, "secrets") and "gcp_service_account" in st.secrets)
 
-# Secondary Toggle: Simulation / Mock Mode
-mock_mode_default = not has_credentials
+# Mặc định TẮT mô phỏng để chạy thẳng dữ liệu thật Google Drive & Sheet
 mock_mode = st.sidebar.toggle(
     "🎭 Chế độ Mô phỏng (Mock Data & Giả lập)",
-    value=mock_mode_default,
+    value=False,
     help="Bật để test trọn vẹn quy trình ngay cả khi chưa có file credentials.json hoặc chưa cài đặt MAGIMIR.",
 )
 
