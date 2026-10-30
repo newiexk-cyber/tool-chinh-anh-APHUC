@@ -227,6 +227,50 @@ def parse_sheet_response(response_data: dict, start_row: int = 1) -> list[dict[s
     return rows_out
 
 
+def get_spreadsheet_sheet_names(
+    spreadsheet_id: str,
+    credentials_path: Optional[Path | str] = None,
+) -> list[str]:
+    """
+    Lấy danh sách tất cả các tab (sheets) từ Google Spreadsheet.
+    Tự động xếp tab mới nhất lên đầu. Nếu không thể kết nối, fallback về danh sách các tháng gần nhất.
+    """
+    from datetime import datetime
+    now = datetime.now()
+
+    # Danh sách dự phòng theo lịch thực tế (từ tháng sau đến các tháng trước)
+    fallback_tabs = []
+    for offset in range(-1, 8):
+        m = (now.month - offset - 1) % 12 + 1
+        y = now.year + ((now.month - offset - 1) // 12)
+        tab_name = f"THÁNG {m:02d}/{y}"
+        if tab_name not in fallback_tabs:
+            fallback_tabs.append(tab_name)
+
+    try:
+        service = get_sheets_service(credentials_path)
+        meta = service.spreadsheets().get(
+            spreadsheetId=spreadsheet_id,
+            fields="sheets(properties(title))",
+        ).execute()
+        sheet_titles = [
+            s["properties"]["title"]
+            for s in meta.get("sheets", [])
+            if s.get("properties", {}).get("title")
+        ]
+        if sheet_titles:
+            # Lọc các tab có chữ 'THÁNG'
+            month_tabs = [t for t in sheet_titles if "THANG" in normalize_vn(t).upper()]
+            other_tabs = [t for t in sheet_titles if t not in month_tabs]
+            # Đảo ngược thứ tự để tab tháng tạo sau cùng (mới nhất) nằm lên đầu
+            month_tabs.reverse()
+            return month_tabs + other_tabs
+    except Exception as e:
+        logger.debug(f"Không thể lấy danh sách tab từ Google Sheet: {e}")
+
+    return fallback_tabs
+
+
 def get_sheets_service(credentials_path: Optional[Path | str] = None) -> Any:
     """
     Initializes and returns an authorized Google Sheets API v4 Resource service.

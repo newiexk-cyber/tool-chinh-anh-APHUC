@@ -78,6 +78,7 @@ from src.sheet_manager import (
     mark_done,
     mark_done_in_memory,
     extract_spreadsheet_id,
+    get_spreadsheet_sheet_names,
 )
 from src.drive_manager import (
     extract_drive_id,
@@ -268,10 +269,28 @@ st.sidebar.markdown("#### 🏢 Kết Nối Đồng Thời 2 Chi Nhánh")
 for b in DEFAULT_BRANCHES:
     st.sidebar.markdown(f"• **{b['name']}**")
 
-sheet_name_input = st.sidebar.text_input(
-    "Tên Tab Sheet",
-    value="THÁNG 10/2026",
+@st.cache_data(ttl=300)
+def fetch_cached_sheet_tabs(sp_id: str, cred_file: str) -> list[str]:
+    return get_spreadsheet_sheet_names(sp_id, cred_file)
+
+available_sheet_tabs = fetch_cached_sheet_tabs(
+    DEFAULT_BRANCHES[0]["spreadsheet_id"],
+    str(credentials_file),
 )
+
+tab_options = available_sheet_tabs + ["-- ➕ Nhập tên Tab khác --"]
+
+selected_tab = st.sidebar.selectbox(
+    "📅 Tên Tab Sheet (Tháng làm việc):",
+    options=tab_options,
+    index=0,
+    help="Tự động cập nhật danh sách các tháng từ Google Sheet. Tháng mới nhất luôn được chọn đầu tiên.",
+)
+
+if selected_tab == "-- ➕ Nhập tên Tab khác --":
+    sheet_name_input = st.sidebar.text_input("Nhập tên Tab Sheet:", value="THÁNG 10/2026")
+else:
+    sheet_name_input = selected_tab
 
 staff_name_input = st.sidebar.text_input(
     "Tên Nhân Viên",
