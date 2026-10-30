@@ -33,6 +33,22 @@ except ImportError:
         return "".join(c for c in nfkd if not unicodedata.combining(c)).upper().strip()
 
 
+def pick_folder_dialog(current_path: str = "") -> str:
+    """Mở hộp thoại chọn thư mục chuẩn OS trên Windows hoặc macOS khi chạy local."""
+    try:
+        import tkinter as tk
+        from tkinter import filedialog
+        root = tk.Tk()
+        root.withdraw()
+        root.attributes('-topmost', True)
+        selected = filedialog.askdirectory(initialdir=current_path or None)
+        root.destroy()
+        return selected
+    except Exception as e:
+        logger.warning(f"Không thể mở hộp thoại chọn thư mục: {e}")
+        return ""
+
+
 def open_folder_in_os(folder_path: Path | str) -> None:
     """Mở thư mục trong File Explorer (Windows) hoặc Finder (macOS)."""
     import subprocess
@@ -284,11 +300,29 @@ elif sys.platform == "darwin":
 else:
     default_save_path = str(ROOT_DIR / "workspace")
 
-save_dir_input = st.sidebar.text_input(
-    "Đường Dẫn Lưu Thư Mục Ảnh Trên Máy:",
-    value=default_save_path,
-    help="Đổi đường dẫn lưu thư mục ảnh của khách khi tải về máy và xuất ảnh DONE.",
-)
+if "save_dir_input" not in st.session_state:
+    st.session_state.save_dir_input = default_save_path
+
+is_cloud_env = Path("/mount/src").exists() or bool(os.environ.get("STREAMLIT_SERVER_ENVIRONMENT"))
+
+if is_cloud_env:
+    st.sidebar.info("☁️ **Web đang chạy trên Cloud:** Khi tải ảnh về máy tính, trình duyệt sẽ tự động mở hộp thoại cho bạn chọn chỗ lưu file nén ZIP!")
+    save_dir_input = str(ROOT_DIR / "workspace")
+else:
+    col_d1, col_d2 = st.sidebar.columns([3, 1.2])
+    with col_d2:
+        if st.button("📂 Chọn", help="Bấm để chọn thư mục trên máy tính"):
+            picked = pick_folder_dialog(st.session_state.save_dir_input)
+            if picked:
+                st.session_state.save_dir_input = picked
+                st.rerun()
+    with col_d1:
+        save_dir_input = st.text_input(
+            "Thư mục lưu ảnh:",
+            value=st.session_state.save_dir_input,
+            key="save_dir_input_field",
+        )
+        st.session_state.save_dir_input = save_dir_input
 
 # Auto-Polling Interval Settings
 st.sidebar.markdown("---")
