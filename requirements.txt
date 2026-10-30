@@ -1,0 +1,13 @@
+streamlit>=1.30.0
+pandas>=2.0.0
+google-api-python-client>=2.100.0
+google-auth>=2.20.0
+google-auth-httplib2>=0.2.0
+google-auth-oauthlib>=1.1.0
+python-dotenv>=1.0.0
+pillow>=10.0.0
+watchdog>=3.0.0
+pyperclip>=1.8.2
+pyautogui>=0.9.54; sys_platform == 'win32' or sys_platform == 'darwin'
+pywinauto>=0.6.8; sys_platform == 'win32'
+pytest>=8.0.0

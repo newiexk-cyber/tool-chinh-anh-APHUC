@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv/
+
+# Secrets & Credentials (BẢO MẬT)
+config/credentials.json
+.streamlit/secrets.toml
+secrets.toml
+*.json
+
+# Workspace Local Media & Large Files
+workspace/
+logs/
+.pytest_cache/
+temp_frames/
+video_frames/
+*.mp4
+
+# Ignore loose screenshots in root, keep assets
+*.png
+!assets/**
