@@ -71,6 +71,7 @@ importlib.reload(src.sheet_manager)
 importlib.reload(src.drive_manager)
 importlib.reload(src.magimir_controller)
 
+from src.auto_claim_bot import run_claim_cycle
 from src.sheet_manager import (
     load_sheet_data,
     assign_staff,
@@ -342,19 +343,42 @@ else:
         )
         st.session_state.save_dir_input = save_dir_input
 
-# Auto-Polling Interval Settings
+# Auto-Claim Bot 24/7: Tự động quét và điền tên Phúc vào Cột O
 st.sidebar.markdown("---")
-st.sidebar.markdown("#### ⏱️ Tự động cập nhật theo thời gian")
+st.sidebar.markdown("#### ⚡ Tự Động Cướp Đơn (Auto-Claim)")
 auto_poll_enabled = st.sidebar.toggle(
-    "🔄 Bật Tự Động Quét (Auto-Poll)",
-    value=False,
-    help="Tự động quét lại Google Sheet để nhận khách mới khi tiệm cập nhật thêm đơn trong ngày.",
+    "🤖 Bật Bot Tự Động Quét & Điền Tên",
+    value=True,
+    help="Khi BẬT: Bot sẽ chạy ngầm định kỳ quét cả 2 chi nhánh. Hễ có khách mới chọn ảnh mà Cột O đang trống là bot TỰ ĐỘNG ĐIỀN TÊN PHÚC ngay lập tức!",
 )
-poll_interval = st.sidebar.selectbox(
-    "Chu kỳ quét định kỳ:",
-    options=["1 phút", "5 phút", "15 phút", "30 phút", "1 giờ", "2 giờ", "24 giờ"],
-    index=4,  # Mặc định 1 giờ
-)
+
+if "bg_claim_thread_running" not in st.session_state:
+    st.session_state.bg_claim_thread_running = False
+
+if auto_poll_enabled and not st.session_state.bg_claim_thread_running:
+    import threading
+    def auto_claim_worker():
+        while True:
+            try:
+                for b in DEFAULT_BRANCHES:
+                    run_claim_cycle(
+                        spreadsheet_id=b["spreadsheet_id"],
+                        sheet_name=st.session_state.get("selected_tab_name", sheet_name_input),
+                        staff_name=staff_name_input,
+                        dry_run=dry_run_mode,
+                    )
+            except Exception:
+                pass
+            time.sleep(30)
+    
+    t = threading.Thread(target=auto_claim_worker, daemon=True)
+    t.start()
+    st.session_state.bg_claim_thread_running = True
+
+if auto_poll_enabled:
+    st.sidebar.caption("🟢 **Bot đang chạy ngầm:** Tự động quét cả 2 bảng mỗi 30s & cướp đơn mới cho bạn!")
+else:
+    st.sidebar.caption("⚪ Bot đang tắt. Bạn có thể bấm nút nhận việc thủ công ở Tab Bước 1.")
 
 # Environment Badges
 st.sidebar.markdown("---")
