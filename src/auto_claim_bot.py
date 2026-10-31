@@ -31,7 +31,7 @@ if sys.platform == "win32":
         pass
 
 from src.utils import get_logger, strip_accents
-from src.sheet_manager import load_sheet_data, assign_staff
+from src.sheet_manager import load_sheet_data, assign_staff, get_spreadsheet_sheet_names
 
 logger = get_logger("auto_claim_bot")
 
@@ -140,9 +140,18 @@ def main():
             for s_info in DEFAULT_SHEETS:
                 scan_text = f"[{now_str}] Đang quét bảng '{s_info['name']}'..."
                 print(scan_text.ljust(85), end="\r")
+                # Tự động lấy tab tháng mới nhất nếu có
+                current_tab = s_info.get("tab", "THÁNG 10/2026")
+                try:
+                    all_tabs = get_spreadsheet_sheet_names(s_info["id"])
+                    if all_tabs:
+                        current_tab = all_tabs[0]
+                except Exception:
+                    pass
+
                 claimed = run_claim_cycle(
                     spreadsheet_id=s_info["id"],
-                    sheet_name=s_info["tab"],
+                    sheet_name=current_tab,
                     staff_name=args.staff,
                     dry_run=args.dry_run,
                 )
