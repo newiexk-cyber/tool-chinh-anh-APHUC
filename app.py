@@ -357,21 +357,31 @@ if "bg_claim_thread_running" not in st.session_state:
 
 if auto_poll_enabled and not st.session_state.bg_claim_thread_running:
     import threading
+    target_sp_branches = list(DEFAULT_BRANCHES)
+    target_sheet = str(sheet_name_input)
+    target_staff = str(staff_name_input)
+    is_dry_run = bool(dry_run_mode)
+
     def auto_claim_worker():
         while True:
             try:
-                for b in DEFAULT_BRANCHES:
+                for b in target_sp_branches:
                     run_claim_cycle(
                         spreadsheet_id=b["spreadsheet_id"],
-                        sheet_name=st.session_state.get("selected_tab_name", sheet_name_input),
-                        staff_name=staff_name_input,
-                        dry_run=dry_run_mode,
+                        sheet_name=target_sheet,
+                        staff_name=target_staff,
+                        dry_run=is_dry_run,
                     )
             except Exception:
                 pass
             time.sleep(30)
     
     t = threading.Thread(target=auto_claim_worker, daemon=True)
+    try:
+        from streamlit.runtime.scriptrunner import add_script_run_ctx
+        add_script_run_ctx(t)
+    except Exception:
+        pass
     t.start()
     st.session_state.bg_claim_thread_running = True
 

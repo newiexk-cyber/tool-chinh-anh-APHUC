@@ -3,7 +3,7 @@ import re
 import time
 from pathlib import Path
 from typing import Any, Optional
-from src.utils import normalize_vn, get_logger
+from src.utils import normalize_vn, get_logger, check_has_credentials
 
 logger = get_logger("sheet_manager")
 
