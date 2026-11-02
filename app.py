@@ -105,8 +105,7 @@ logger = get_logger("app_ui")
 
 # Page Configuration
 st.set_page_config(
-    page_title="Auto Retouch Studio - MAGIMIR",
-    page_icon="📸",
+    page_title="MUNCI STUDIO | AUTO RETOUCH & DRIVE WORKFLOW",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -114,71 +113,102 @@ st.set_page_config(
 # Custom High-End Modern Studio CSS
 CUSTOM_CSS = """
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
     
-    html, body, [class*="css"] {
-        font-family: 'Plus Jakarta Sans', sans-serif;
+    :root {
+        --studio-bg: #0c0d0f;
+        --studio-surface: #131518;
+        --studio-surface-subtle: #181b1f;
+        --studio-border: #23272e;
+        --studio-border-focus: #39404c;
+        --studio-text: #e1e4ea;
+        --studio-text-muted: #747d8c;
+        --studio-silver: #c9d0db;
     }
-    
-    /* Top Header Gradient Banner */
+
+    html, body, [class*="css"] {
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        color: var(--studio-text);
+        letter-spacing: -0.01em;
+    }
+
+    /* Minimalist Darkroom Header */
     .studio-header {
-        background: linear-gradient(135deg, #1e1e2f 0%, #161623 50%, #0d0d15 100%);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 16px;
-        padding: 24px 32px;
-        margin-bottom: 24px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        background: #131519;
+        border: 1px solid var(--studio-border);
+        border-radius: 4px;
+        padding: 18px 24px;
+        margin-bottom: 20px;
         display: flex;
         align-items: center;
         justify-content: space-between;
     }
     
     .studio-title {
-        font-size: 28px;
-        font-weight: 800;
-        background: linear-gradient(90deg, #a78bfa 0%, #f472b6 50%, #38bdf8 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        font-size: 18px;
+        font-weight: 700;
+        color: #f3f5f8;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
         margin: 0;
-        letter-spacing: -0.5px;
     }
     
     .studio-subtitle {
-        color: #94a3b8;
-        font-size: 14px;
+        color: var(--studio-text-muted);
+        font-size: 11.5px;
         margin-top: 4px;
-        font-weight: 500;
+        font-weight: 400;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+    }
+
+    .studio-meta {
+        text-align: right;
+        font-size: 11px;
+        color: var(--studio-text-muted);
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
     }
     
-    /* Metric Cards Styling */
+    /* Photography Studio Metric Containers */
     div[data-testid="metric-container"] {
-        background: rgba(30, 30, 46, 0.7);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.07);
-        padding: 16px 20px;
-        border-radius: 14px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-        transition: transform 0.2s ease, border-color 0.2s ease;
+        background: #131519;
+        border: 1px solid var(--studio-border);
+        padding: 14px 18px;
+        border-radius: 4px;
+        transition: border-color 0.15s ease;
     }
     
     div[data-testid="metric-container"]:hover {
-        transform: translateY(-2px);
-        border-color: rgba(167, 139, 250, 0.4);
+        border-color: var(--studio-border-focus);
     }
-    
+
+    div[data-testid="metric-container"] label {
+        color: var(--studio-text-muted) !important;
+        font-size: 11px !important;
+        font-weight: 600 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.06em !important;
+    }
+
+    div[data-testid="metric-container"] div[data-testid="stMetricValue"] {
+        color: #f1f3f7 !important;
+        font-weight: 600 !important;
+        font-size: 22px !important;
+    }
+
     /* Terminal Log Container */
     .terminal-box {
-        background-color: #0c0d14;
-        border: 1px solid #1e293b;
-        border-radius: 12px;
-        padding: 16px;
-        font-family: 'JetBrains Mono', 'Consolas', monospace;
-        font-size: 12.5px;
-        color: #38bdf8;
+        background-color: #090a0c;
+        border: 1px solid var(--studio-border);
+        border-radius: 4px;
+        padding: 14px 18px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+        color: #8da4be;
         height: 220px;
         overflow-y: auto;
         line-height: 1.6;
-        box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.6);
     }
     
     .log-line {
@@ -186,18 +216,75 @@ CUSTOM_CSS = """
         white-space: pre-wrap;
     }
     
+    /* Technical Precision Badges */
     .badge-pill {
         display: inline-block;
-        padding: 4px 10px;
-        border-radius: 9999px;
-        font-size: 12px;
-        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 3px;
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
         margin-right: 6px;
+        border: 1px solid transparent;
     }
-    .badge-win { background: #1e3a8a; color: #93c5fd; }
-    .badge-mac { background: #4c1d95; color: #d8b4fe; }
-    .badge-mock { background: #78350f; color: #fde68a; }
-    .badge-real { background: #064e3b; color: #6ee7b7; }
+    .badge-win { background: #151821; border-color: #262c3b; color: #9bb0d4; }
+    .badge-mac { background: #1c1624; border-color: #352846; color: #bca0d8; }
+    .badge-mock { background: #221a12; border-color: #3d2d1d; color: #c8a67c; }
+    .badge-real { background: #112017; border-color: #1e3c2b; color: #7ec49b; }
+
+    /* Minimal Technical Buttons */
+    div.stButton > button {
+        border-radius: 3px !important;
+        font-weight: 600 !important;
+        font-size: 11.5px !important;
+        letter-spacing: 0.05em !important;
+        text-transform: uppercase !important;
+        border: 1px solid var(--studio-border) !important;
+        background: #171a1f !important;
+        color: #dde1e9 !important;
+        transition: all 0.15s ease !important;
+    }
+
+    div.stButton > button:hover {
+        border-color: #404856 !important;
+        background: #1f232a !important;
+        color: #ffffff !important;
+    }
+
+    div.stButton > button[kind="primary"] {
+        background: #232932 !important;
+        border-color: #3a4556 !important;
+        color: #f1f4f8 !important;
+    }
+
+    div.stButton > button[kind="primary"]:hover {
+        background: #2b3340 !important;
+        border-color: #4e5d74 !important;
+    }
+
+    /* Tabs Minimal Photography Darkroom */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 6px;
+        border-bottom: 1px solid var(--studio-border);
+    }
+
+    .stTabs [data-baseweb="tab"] {
+        padding: 8px 16px;
+        background: transparent;
+        border: none;
+        border-bottom: 2px solid transparent;
+        font-size: 11.5px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--studio-text-muted);
+    }
+
+    .stTabs [data-baseweb="tab"][aria-selected="true"] {
+        color: #f1f4f8;
+        border-bottom: 2px solid #8ba3c7;
+    }
 </style>
 """
 st.markdown(CUSTOM_CSS, unsafe_allow_html=True)
@@ -211,28 +298,28 @@ if "last_action_message" not in st.session_state:
     st.session_state.last_action_message = ""
 
 # Sidebar: Configurations & Safety Gates
-st.sidebar.markdown("### ⚙️ Cấu Hình & Chốt Chặn An Toàn")
+st.sidebar.markdown("### CẤU HÌNH & CHỐT CHẶN AN TOÀN")
 
 # 1. Primary Safe Mode Switch
 dry_run_mode = st.sidebar.toggle(
-    "🛡️ Chế độ An Toàn (Lưu máy, KHÔNG up Drive)",
+    "Chế độ an toàn (Chỉ lưu máy, không tải lên Drive)",
     value=False,
     help="Khi BẬT: Bot tải ảnh thật và chạy MagiMir lưu vào máy tính. KHÔNG upload lên Drive và KHÔNG đổi trạng thái trên Sheet để bạn kiểm tra trước. Khi TẮT: Sẽ upload lên Drive và đánh dấu DONE trên Sheet.",
 )
 
 if dry_run_mode:
-    st.sidebar.warning(
-        "🛡️ **ĐANG BẬT AN TOÀN (LƯU MÁY)**\n\n"
-        "• Tải ảnh gốc từ Drive về máy.\n"
-        "• Chạy MagiMir chỉnh & lưu vào folder DONE trên máy.\n"
-        "• ❌ **KHÔNG** upload lên Drive.\n"
-        "• ❌ **KHÔNG** đổi trạng thái Sheet (để bạn xem trước)."
+    st.sidebar.info(
+        "**CHẾ ĐỘ AN TOÀN (CHỈ LƯU MÁY)**\n\n"
+        "• Tải ảnh gốc từ Drive về máy local.\n"
+        "• Chạy MagiMir xử lý và lưu vào thư mục DONE local.\n"
+        "• KHÔNG tải lên Google Drive.\n"
+        "• KHÔNG cập nhật trạng thái trên Google Sheet."
     )
 else:
-    st.sidebar.error(
-        "🚀 **CHẾ ĐỘ GHI THẬT (UPLOAD DRIVE)**\n\n"
-        "• Sẽ upload toàn bộ ảnh DONE lên Drive của khách!\n"
-        "• Sẽ đổi trạng thái khách thành 'DONE' trên Google Sheet!"
+    st.sidebar.warning(
+        "**CHẾ ĐỘ GHI TRỰC TIẾP (UPLOAD DRIVE)**\n\n"
+        "• Tự động tải toàn bộ ảnh DONE lên Google Drive của khách.\n"
+        "• Cập nhật trạng thái khách hàng thành DONE trên Google Sheet."
     )
 
 # Credentials Verification (hỗ trợ cả file local và Streamlit Cloud Secrets)
@@ -241,7 +328,7 @@ has_credentials = credentials_file.exists() or (hasattr(st, "secrets") and "gcp_
 
 # Mặc định TẮT mô phỏng để chạy thẳng dữ liệu thật Google Drive & Sheet
 mock_mode = st.sidebar.toggle(
-    "🎭 Chế độ Mô phỏng (Mock Data & Giả lập)",
+    "Chế độ mô phỏng (Mock Data)",
     value=False,
     help="Bật để test trọn vẹn quy trình ngay cả khi chưa có file credentials.json hoặc chưa cài đặt MAGIMIR.",
 )
@@ -265,7 +352,7 @@ DEFAULT_BRANCHES = [
 
 # Google Sheets selector
 st.sidebar.markdown("---")
-st.sidebar.markdown("#### 🏢 Kết Nối Đồng Thời 2 Chi Nhánh")
+st.sidebar.markdown("#### CHI NHÁNH KẾT NỐI")
 for b in DEFAULT_BRANCHES:
     st.sidebar.markdown(f"• **{b['name']}**")
 
@@ -278,16 +365,16 @@ available_sheet_tabs = fetch_cached_sheet_tabs(
     str(credentials_file),
 )
 
-tab_options = available_sheet_tabs + ["-- ➕ Nhập tên Tab khác --"]
+tab_options = available_sheet_tabs + ["-- [Nhập tên Tab khác] --"]
 
 selected_tab = st.sidebar.selectbox(
-    "📅 Tên Tab Sheet (Tháng làm việc):",
+    "Tab Sheet (Tháng làm việc):",
     options=tab_options,
     index=0,
     help="Tự động cập nhật danh sách các tháng từ Google Sheet. Tháng mới nhất luôn được chọn đầu tiên.",
 )
 
-if selected_tab == "-- ➕ Nhập tên Tab khác --":
+if selected_tab == "-- [Nhập tên Tab khác] --":
     sheet_name_input = st.sidebar.text_input("Nhập tên Tab Sheet:", value="THÁNG 10/2026")
 else:
     sheet_name_input = selected_tab
@@ -300,7 +387,7 @@ staff_name_input = st.sidebar.text_input(
 
 preset_options = ["Preset 2 (Khuyên dùng)", "Preset 1", "Preset 3"]
 preset_name_input = st.sidebar.selectbox(
-    "Tên Preset MAGIMIR",
+    "Preset MAGIMIR",
     options=preset_options,
     index=0,
     help="Preset chỉnh ảnh trong MagiMir 2 (Preset 2 là preset được quay trong video thao tác)",
@@ -308,7 +395,7 @@ preset_name_input = st.sidebar.selectbox(
 
 # Thư mục lưu ảnh trên máy tính (Cross-platform)
 st.sidebar.markdown("---")
-st.sidebar.markdown("#### 📁 Thư Mục Lưu Ảnh Tải Về Máy")
+st.sidebar.markdown("#### THƯ MỤC LƯU ẢNH LOCAL")
 
 if sys.platform == "win32":
     win_default = Path(r"D:\02_HinhAnh_Media\ẢNH CHỤP")
@@ -325,12 +412,12 @@ if "save_dir_input" not in st.session_state:
 is_cloud_env = Path("/mount/src").exists() or bool(os.environ.get("STREAMLIT_SERVER_ENVIRONMENT"))
 
 if is_cloud_env:
-    st.sidebar.info("☁️ **Web đang chạy trên Cloud:** Khi tải ảnh về máy tính, trình duyệt sẽ tự động mở hộp thoại cho bạn chọn chỗ lưu file nén ZIP!")
+    st.sidebar.info("**Môi trường Cloud:** Trình duyệt sẽ mở hộp thoại để bạn chọn vị trí lưu tập tin ZIP khi tải về.")
     save_dir_input = str(ROOT_DIR / "workspace")
 else:
     col_d1, col_d2 = st.sidebar.columns([3, 1.2])
     with col_d2:
-        if st.button("📂 Chọn", help="Bấm để chọn thư mục trên máy tính"):
+        if st.button("Chọn...", help="Chọn thư mục trên máy tính"):
             picked = pick_folder_dialog(st.session_state.save_dir_input)
             if picked:
                 st.session_state.save_dir_input = picked
@@ -345,9 +432,9 @@ else:
 
 # Auto-Claim Bot 24/7: Tự động quét và điền tên Phúc vào Cột O
 st.sidebar.markdown("---")
-st.sidebar.markdown("#### ⚡ Tự Động Cướp Đơn (Auto-Claim)")
+st.sidebar.markdown("#### TỰ ĐỘNG NHẬN ĐƠN (AUTO-CLAIM)")
 auto_poll_enabled = st.sidebar.toggle(
-    "🤖 Bật Bot Tự Động Quét & Điền Tên",
+    "Bật bot tự động quét và nhận đơn",
     value=True,
     help="Khi BẬT: Bot sẽ chạy ngầm định kỳ quét cả 2 chi nhánh. Hễ có khách mới chọn ảnh mà Cột O đang trống là bot TỰ ĐỘNG ĐIỀN TÊN PHÚC ngay lập tức!",
 )
@@ -386,9 +473,9 @@ if auto_poll_enabled and not st.session_state.bg_claim_thread_running:
     st.session_state.bg_claim_thread_running = True
 
 if auto_poll_enabled:
-    st.sidebar.caption("🟢 **Bot đang chạy ngầm:** Tự động quét cả 2 bảng mỗi 30s & cướp đơn mới cho bạn!")
+    st.sidebar.caption("[ĐANG CHẠY] Tự động quét cả 2 bảng định kỳ mỗi 30s và nhận đơn mới.")
 else:
-    st.sidebar.caption("⚪ Bot đang tắt. Bạn có thể bấm nút nhận việc thủ công ở Tab Bước 1.")
+    st.sidebar.caption("[ĐÃ TẮT] Bot đang tạm dừng. Có thể nhận việc thủ công tại Bước 1.")
 
 # Environment Badges
 st.sidebar.markdown("---")
@@ -396,7 +483,7 @@ os_name = get_platform()
 os_label = "Windows (x64)" if os_name == "windows" else ("macOS Apple Silicon (M1/M2/M3)" if os_name == "darwin" else "Linux/Other")
 badge_os_cls = "badge-win" if os_name == "windows" else "badge-mac"
 
-cred_label = "✅ Đã có credentials.json" if has_credentials else "⚠️ Chưa có credentials.json"
+cred_label = "Credentials: Sẵn sàng" if has_credentials else "Credentials: Chưa có"
 badge_cred_cls = "badge-real" if has_credentials else "badge-mock"
 
 st.sidebar.markdown(
@@ -410,7 +497,7 @@ st.sidebar.markdown(
 )
 
 magimir_active = is_magimir_running()
-mag_status_text = "🟢 MAGIMIR Đang Mở" if magimir_active else "⚪ MAGIMIR Chưa Mở (Dùng Giả Lập)"
+mag_status_text = "MAGIMIR: Đang chạy" if magimir_active else "MAGIMIR: Chưa bật (Mô phỏng)"
 st.sidebar.caption(f"Trạng thái phần mềm: **{mag_status_text}**")
 
 
@@ -423,12 +510,12 @@ st.markdown(
     """
     <div class="studio-header">
         <div>
-            <h1 class="studio-title">AUTO RETOUCH STUDIO • MAGIMIR</h1>
-            <div class="studio-subtitle">Hệ thống tự động hóa khép kín: Google Sheet (Tháng 10/2026) ➔ Google Drive ➔ MAGIMIR ➔ Upload DONE</div>
+            <h1 class="studio-title">MUNCI STUDIO | AUTO RETOUCH & DRIVE WORKFLOW</h1>
+            <div class="studio-subtitle">Quy trình tự động hóa: Google Sheet | Google Drive | MagiMir | Auto Sync DONE</div>
         </div>
-        <div style="text-align: right;">
-            <div style="font-size: 13px; color: #94a3b8;">Tiệm ảnh Trái Thơm • Munci Studio</div>
-            <div style="font-size: 12px; color: #64748b; margin-top: 2px;">Phiên bản v1.2.0 Auto-Select</div>
+        <div class="studio-meta">
+            <div>Tiệm ảnh Trái Thơm | Munci Studio</div>
+            <div style="margin-top: 3px; color: #5a6270;">Phiên bản 1.2.0 Minimalist</div>
         </div>
     </div>
     """,
@@ -513,12 +600,12 @@ norm_staff_filter = strip_accents(staff_name_input)
 # ==============================================================================
 branch_col_title, branch_col_filter = st.columns([1, 2.5])
 with branch_col_title:
-    st.markdown("#### 🏢 Chọn Chi Nhánh:")
+    st.markdown("#### LỌC CHI NHÁNH:")
 with branch_col_filter:
     branch_labels = [
-        "🌟 Tất Cả 2 Chi Nhánh",
-        "📍 Chi Nhánh 1: MUNCI [TĐ]",
-        "📍 Chi Nhánh 2: PHOTOSHOP [ẨN]",
+        "Tất cả chi nhánh",
+        "Chi Nhánh 1: MUNCI [TĐ]",
+        "Chi Nhánh 2: PHOTOSHOP [ẨN]",
     ]
     selected_branch_filter = st.radio(
         "Lựa chọn Chi Nhánh:",
@@ -577,16 +664,16 @@ st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
 # ==============================================================================
 
 tab_step1, tab_step2, tab_step3 = st.tabs([
-    f"⚡ BƯỚC 1: TỰ ĐỘNG NHẬN ĐƠN MỚI CHO {staff_name_input}",
-    f"🎨 BƯỚC 2: CHỌN BỘ ĐỂ MAGIMIR TỰ CHỈNH & UP DRIVE",
-    "🎯 BƯỚC 3: AUTO TICK MÃ ẢNH & TẠO 'ĐÃ CHỌN' (DRIVE)",
+    f"BƯỚC 1: NHẬN ĐƠN MỚI ({staff_name_input})",
+    "BƯỚC 2: CHỈNH ẢNH & ĐỒNG BỘ DRIVE",
+    "BƯỚC 3: GOM ẢNH KHÁCH CHỌN TRÊN DRIVE",
 ])
 
 # ------------------------------------------------------------------------------
 # TAB 1: BƯỚC 1 - AUTO TICK TÊN PHÚC CHO CÁC ĐƠN MỚI
 # ------------------------------------------------------------------------------
 with tab_step1:
-    st.markdown("### ⚡ Bước 1: Nhận Đơn Mới Tự Động (Điền Tên Phúc Vào Cột O)")
+    st.markdown("### Bước 1: Nhận Đơn Mới (Cột O)")
     st.info(
         f"**Mục tiêu Bước 1:** Tự động phát hiện các Concept mới khách đã chọn ảnh mà Cột O (Nhân viên) đang trống "
         f"để điền ngay tên **'{staff_name_input}'** vào Google Sheet tương ứng của từng chi nhánh."
@@ -599,14 +686,14 @@ with tab_step1:
     col_btn_claim, col_bot_info = st.columns([1.5, 1.5])
     with col_btn_claim:
         btn_claim_all = st.button(
-            f"⚡ NHẬN TẤT CẢ {len(unassigned_list)} ĐƠN MỚI ({selected_branch_filter})",
+            f"NHẬN TẤT CẢ {len(unassigned_list)} ĐƠN MỚI ({selected_branch_filter})",
             type="primary",
             use_container_width=True,
             disabled=(len(unassigned_list) == 0),
         )
     with col_bot_info:
         st.caption(
-            "💡 **Chạy bot tự động 24/7:** Bạn có thể mở file `run_auto_claim_bot.bat` ngoài Desktop để bot tự quét ngầm cả 2 bảng mỗi 30s và cướp đơn liên tục!"
+            "**Chạy nền 24/7:** Khởi động file run_auto_claim_bot.bat để hệ thống tự động quét và nhận đơn định kỳ mỗi 30 giây."
         )
 
     if btn_claim_all and unassigned_list:
@@ -631,11 +718,11 @@ with tab_step1:
                 total_claimed += len(row_nums)
             for c in unassigned_list:
                 c["nhan_vien"] = staff_name_input
-            st.toast(f"Đã nhận thành công {total_claimed} đơn mới trên các bảng!", icon="✍️")
+            st.toast(f"Đã nhận thành công {total_claimed} đơn mới trên Google Sheet.")
             st.rerun()
 
     if unassigned_list:
-        st.markdown(f"#### 🔔 Có **{len(unassigned_list)} đơn mới** chưa có ai nhận:")
+        st.markdown(f"#### Danh sách {len(unassigned_list)} đơn mới chưa có người nhận:")
         df_unassigned = pd.DataFrame([
             {
                 "CHI NHÁNH": c.get("branch_name", ""),
@@ -646,13 +733,13 @@ with tab_step1:
                 "SL HÌNH": c.get("sl_hinh_chon", 0),
                 "TRẠNG THÁI": c.get("trang_thai", ""),
                 "LINK DRIVE": c.get("drive_link", ""),
-                "NHÂN VIÊN (O)": "👉 [CHƯA CÓ AI NHẬN]",
+                "NHÂN VIÊN (O)": "[CHƯA NHẬN]",
             }
             for c in unassigned_list
         ])
         st.dataframe(df_unassigned, use_container_width=True, hide_index=True)
     else:
-        st.success("🎉 Hiện tại không có đơn mới nào đang bị bỏ trống trong chi nhánh này. Tất cả đơn đã được nhận!")
+        st.success("Hiện tại không có đơn mới nào đang bị bỏ trống. Tất cả đơn đã được tiếp nhận.")
 
 
 
@@ -660,7 +747,7 @@ with tab_step1:
 # TAB 2: BƯỚC 2 - CHỌN BỘ CỦA PHÚC ĐỂ MAGIMIR CHỈNH & UP DRIVE
 # ------------------------------------------------------------------------------
 with tab_step2:
-    st.markdown(f"### 🎨 Bước 2: Danh Sách Bộ Ảnh Của {staff_name_input} Cần Chỉnh")
+    st.markdown(f"### Bước 2: Danh Sách Bộ Ảnh Cần Chỉnh ({staff_name_input})")
     st.caption("Tick chọn những bộ bạn muốn chỉnh hôm nay rồi bấm nút **'BẮT ĐẦU CHỈNH ẢNH'** ở phía dưới.")
 
     my_jobs_list = [
@@ -670,11 +757,11 @@ with tab_step2:
     # Quick Select Controls
     q_col1, q_col2, _ = st.columns([2, 2, 4])
     with q_col1:
-        if st.button("✅ Chọn tất cả bộ của tôi", use_container_width=True):
+        if st.button("Chọn tất cả bộ của tôi", use_container_width=True):
             st.session_state.selected_rows = {c["job_uid"] for c in my_jobs_list}
             st.rerun()
     with q_col2:
-        if st.button("❌ Bỏ chọn tất cả", use_container_width=True):
+        if st.button("Bỏ chọn tất cả", use_container_width=True):
             st.session_state.selected_rows.clear()
             st.rerun()
 
@@ -716,7 +803,7 @@ with tab_step2:
                 "LINK DRIVE",
                 help="Bấm mở thư mục Google Drive của khách",
                 validate=r"^https?://.*",
-                display_text="Mở Drive ↗",
+                display_text="Mở Drive",
             ),
             "SL HÌNH": st.column_config.NumberColumn(
                 "SL HÌNH",
@@ -753,13 +840,13 @@ with tab_step2:
     btn_col_run, btn_col_scan = st.columns([3, 1.2])
     with btn_col_run:
         run_btn = st.button(
-            f"🚀 BẮT ĐẦU CHỈNH {len(st.session_state.selected_rows)} BỘ ĐÃ CHỌN (Tải CHỌN ➔ MAGIMIR ➔ Up DONE)",
+            f"BẮT ĐẦU XỬ LÝ {len(st.session_state.selected_rows)} BỘ ĐÃ CHỌN (Tải về -> MagiMir -> Đồng bộ DONE)",
             type="primary",
             use_container_width=True,
             disabled=(len(st.session_state.selected_rows) == 0),
         )
     with btn_col_scan:
-        if st.button("🔄 Quét lại Cả 2 Bảng Sheet", use_container_width=True):
+        if st.button("Quét lại dữ liệu Sheet", use_container_width=True):
             with st.spinner("Đang quét dữ liệu mới nhất từ CẢ 2 BẢNG..."):
                 st.session_state.customers_data = fetch_and_filter_all_branches(
                     branches=DEFAULT_BRANCHES,
@@ -771,7 +858,7 @@ with tab_step2:
                 st.session_state.selected_rows = {
                     c["job_uid"] for c in st.session_state.customers_data if strip_accents(c.get("nhan_vien", "")) == norm_staff_filter
                 }
-                st.toast("Đã cập nhật dữ liệu cả 2 chi nhánh mới nhất!", icon="✅")
+                st.toast("Đã cập nhật dữ liệu từ các chi nhánh.")
                 st.rerun()
 
 
@@ -779,9 +866,9 @@ with tab_step2:
 # TAB 3: BƯỚC 3 - AUTO TICK MÃ ẢNH & TẠO 'ĐÃ CHỌN' TRÊN GOOGLE DRIVE
 # ------------------------------------------------------------------------------
 with tab_step3:
-    st.markdown("### 🎯 Auto Tick Mã Ảnh & Tự Động Gom Vào Thư Mục 'ĐÃ CHỌN' Trên Google Drive")
+    st.markdown("### Bước 3: Gom Ảnh Khách Chọn Vào Thư Mục 'ĐÃ CHỌN' Trên Drive")
     st.info(
-        "💡 **Tính năng mới:** Nhập link Google Drive của khách (hoặc chọn nhanh từ danh sách khách trên Sheet) và "
+        "Nhập liên kết Google Drive của khách (hoặc chọn từ danh sách) và "
         "dán danh sách mã số ảnh khách chọn (ví dụ: `0012, 0045, 108` hoặc `IMG_0012`). "
         "Tool sẽ tự động quét ảnh gốc trên Drive, so khớp đúng mã và gom vào thư mục **'ĐÃ CHỌN'**."
     )
@@ -814,13 +901,13 @@ with tab_step3:
         )
 
         safe_copy = st.checkbox(
-            "🛡️ Sao chép an toàn (Giữ nguyên file ảnh gốc, copy vào ĐÃ CHỌN)",
+            "Sao chép an toàn (Giữ nguyên tệp gốc, sao chép sang ĐÃ CHỌN)",
             value=True,
             help="Khuyên dùng để không bao giờ làm mất ảnh gốc của khách.",
         )
 
         download_to_local_tab3 = st.checkbox(
-            "📥 Tải bộ ảnh này về máy tính ngay sau khi gom xong",
+            "Tải bộ ảnh về máy tính ngay sau khi hoàn thành",
             value=False,
             help=f"Tự động tải toàn bộ ảnh đã lọc về thư mục: {save_dir_input}",
         )
@@ -834,7 +921,7 @@ with tab_step3:
         )
 
         btn_organize = st.button(
-            "🚀 BẮT ĐẦU AUTO TICK & GOM VÀO 'ĐÃ CHỌN' TRÊN DRIVE",
+            "BẮT ĐẦU GOM ẢNH THEO MÃ SỐ TRÊN DRIVE",
             type="primary",
             use_container_width=True,
             disabled=not (target_drive_url and codes_input.strip()),
@@ -858,7 +945,7 @@ with tab_step3:
                 )
                 if organize_res.get("success"):
                     st.success(organize_res.get("message", "Đã gom ảnh thành công!"))
-                    st.balloons()
+                    # balloons disabled for minimalism
 
                     if download_to_local_tab3 and not dry_run_mode:
                         with st.spinner("Đang tải các ảnh đã gom về máy tính..."):
@@ -883,8 +970,8 @@ with tab_step3:
                                     force_mock=mock_mode,
                                     progress_callback=on_tab3_dl_progress,
                                 )
-                                st.success(f"📥 Đã tải thành công {len(downloaded_items)} ảnh về máy tại: `{local_dest}`")
-                                if st.button("📂 Mở thư mục ảnh trên máy", key="btn_open_tab3_dl"):
+                                st.success(f"Đã tải thành công {len(downloaded_items)} ảnh về máy tại: `{local_dest}`")
+                                if st.button("Mở thư mục trên máy", key="btn_open_tab3_dl"):
                                     open_folder_in_os(local_dest)
                             except Exception as dl_err:
                                 st.warning(f"Lỗi tải ảnh về máy: {dl_err}")
@@ -894,17 +981,17 @@ with tab_step3:
 
                     c_res1, c_res2 = st.columns(2)
                     with c_res1:
-                        st.markdown(f"#### ✅ Đã gom {len(matched)} ảnh:")
+                        st.markdown(f"#### Đã gom thành công {len(matched)} ảnh:")
                         if matched:
                             st.dataframe(pd.DataFrame(matched), use_container_width=True)
                     with c_res2:
                         if unmatched:
-                            st.markdown(f"#### ⚠️ Không tìm thấy {len(unmatched)} mã:")
+                            st.markdown(f"#### Không tìm thấy {len(unmatched)} mã số:")
                             st.write(", ".join(unmatched))
                         else:
-                            st.info("🎉 Tất cả mã số đều được tìm thấy chính xác 100%!")
+                            st.info("Tất cả mã số đều được tìm thấy chính xác 100%.")
                 else:
-                    st.error(f"❌ Có lỗi: {organize_res.get('message')}")
+                    st.error(f"Lỗi: {organize_res.get('message')}")
 
 
 
@@ -955,7 +1042,7 @@ if run_btn:
             )
         else:
             # GIAI ĐOẠN 1: TỰ ĐỘNG TẢI VỀ HẾT TOÀN BỘ CÁC BỘ ẢNH ĐÃ CHỌN TRƯỚC
-            st.info(f"📥 **GIAI ĐOẠN 1:** Đang tự động tải về hết **{len(eligible_for_run)} bộ ảnh gốc** về máy tính (không bắt bạn chờ)...")
+            st.info(f"**GIAI ĐOẠN 1: TẢI ẢNH GỐC** — Đang tự động tải {len(eligible_for_run)} bộ ảnh về máy tính...")
             
             batch_tasks = []
             download_overall = st.progress(0, text="Bắt đầu tải về...")
@@ -1029,13 +1116,13 @@ if run_btn:
                     except Exception:
                         pass
                     st.warning(
-                        f"⚠️ **[Row {row_id} - {cust_name}]:** Chưa có thư mục **'CHỌN'** hoặc **'ĐÃ CHỌN'** trên Google Drive! "
+                        f"**[Row {row_id} - {cust_name}]:** Chưa tìm thấy thư mục CHỌN hoặc ĐÃ CHỌN trên Drive! "
                         f"(Trên Drive của khách đang có ảnh gốc nhưng chưa gom vào thư mục 'ĐÃ CHỌN'). "
-                        f"👉 Bạn hãy qua **Tab Bước 3** dán mã số ảnh của khách để gom trước nhé!"
+                        f"Vui lòng sử dụng Bước 3 để gom ảnh theo mã số trước."
                     )
 
-            download_overall.progress(100, text=f"✅ Đã tải về thành công toàn bộ {len(batch_tasks)}/{len(eligible_for_run)} bộ ảnh gốc!")
-            st.toast(f"Đã tải xong toàn bộ {len(batch_tasks)} bộ ảnh!", icon="📥")
+            download_overall.progress(100, text=f"Hoàn thành tải về {len(batch_tasks)}/{len(eligible_for_run)} bộ ảnh gốc.")
+            st.toast(f"Đã hoàn thành tải về {len(batch_tasks)} bộ ảnh.")
 
             # Tự động mở thư mục ảnh gốc để bạn kéo thả hàng loạt vào MagiMir
             if last_day_folder and last_day_folder.exists():
@@ -1045,11 +1132,11 @@ if run_btn:
             st.markdown(
                 f"""
                 ---
-                ### 🤖 GIAI ĐOẠN 2: TỰ ĐỘNG CANH QUÉT MAGIMIR & TỰ UP LÊN DRIVE
-                > 💡 **BẠN CHỈ CẦN THAO TÁC TRÊN MAGIMIR:**
-                > 1. Toàn bộ ảnh gốc của **{len(batch_tasks)} khách** đã nằm sẵn trong máy tính của bạn.
-                > 2. Hãy kéo các thư mục này vào **MagiMir 2** và bấm **Export** (MagiMir sẽ tự sinh thư mục `DONE`).
-                > 3. Hệ thống bên dưới đang **TỰ ĐỘNG QUÉT LIÊN TỤC**. Hễ bộ nào MagiMir xuất xong là tool sẽ **TỰ BỐC ẢNH UPLOAD LÊN DRIVE** ngay lập tức, không bắt bạn chờ đợi!
+                ### GIAI ĐOẠN 2: QUÉT MAGIMIR & ĐỒNG BỘ GOOGLE DRIVE
+                > **QUY TRÌNH XỬ LÝ:**
+                > 1. Toàn bộ ảnh gốc của **{len(batch_tasks)} khách** đã được tải về máy.
+                > 2. Kéo các thư mục này vào MagiMir và tiến hành Export (MagiMir tự tạo thư mục DONE).
+                > 3. Hệ thống tự động quét liên tục mỗi 2s. Khi MagiMir xuất xong, tệp sẽ được tự động đồng bộ lên Drive.
                 """
             )
 
@@ -1103,7 +1190,7 @@ if run_btn:
                                     )
                                     task["uploaded"] = True
                                     task["status"] = "done_uploaded"
-                                    st.toast(f"✅ Đã tự động up xong khách {task['cust_name']} ({len(uploaded_files)} ảnh)!", icon="🎉")
+                                    st.toast(f"Đã tải lên Drive hoàn tất: {task['cust_name']} ({len(uploaded_files)} ảnh).")
                                 except Exception as up_err:
                                     logger.error(f"Lỗi upload Drive cho {task['cust_name']}: {up_err}")
                     else:
@@ -1114,15 +1201,15 @@ if run_btn:
                     summary_cards = []
                     for t in batch_tasks:
                         if t["status"] == "done_uploaded":
-                            badge = "✅ ĐÃ UP LÊN DRIVE HOÀN TẤT"
+                            badge = "HOÀN TẤT (ĐÃ UP DRIVE)"
                         elif t["status"] == "done_safe":
-                            badge = "🛡️ ĐÃ XONG TẠI MÁY (CHẾ ĐỘ AN TOÀN)"
+                            badge = "HOÀN TẤT (LƯU LOCAL)"
                         elif t["status"] == "uploading":
-                            badge = "🚀 ĐANG TẢI LÊN GOOGLE DRIVE..."
+                            badge = "ĐANG TẢI LÊN DRIVE"
                         elif t["exported_count"] > 0:
-                            badge = f"🎨 MagiMir đang xuất ({t['exported_count']}/{t['expected_count']} ảnh)..."
+                            badge = f"MAGIMIR ĐANG XUẤT ({t['exported_count']}/{t['expected_count']})"
                         else:
-                            badge = "⏳ Đang đợi MagiMir xuất thư mục DONE..."
+                            badge = "CHỜ XUẤT THƯ MỤC DONE"
                         
                         summary_cards.append({
                             "Khách hàng": t["cust_name"],
@@ -1132,9 +1219,9 @@ if run_btn:
                             "Trạng thái tự động": badge,
                         })
                     
-                    st.markdown("#### 📡 Bảng Theo Dõi Quét Tự Động Thời Gian Thực:")
+                    st.markdown("#### BẢNG THEO DÕI ĐỒNG BỘ THỜI GIAN THỰC")
                     st.dataframe(pd.DataFrame(summary_cards), use_container_width=True, hide_index=True)
-                    st.caption(f"🔄 Hệ thống đang tự động quét liên tục mỗi 2 giây... (Đã quét {int(time.time() - start_time)} giây)")
+                    st.caption(f"Hệ thống đang quét tự động chu kỳ 2s. Thời gian chạy: {int(time.time() - start_time)}s.")
 
                 if all_done:
                     break
@@ -1142,8 +1229,8 @@ if run_btn:
                 time.sleep(2.0)
 
             if all_done:
-                st.success("🎉 TẤT CẢ CÁC BỘ ẢNH ĐÃ ĐƯỢC MAGIMIR XUẤT VÀ TỰ ĐỘNG UPLOAD XONG HOÀN TOÀN!")
-                st.balloons()
+                st.success("Hoàn thành: Tất cả các bộ ảnh đã được xuất và đồng bộ thành công.")
+                # balloons disabled for minimalism
 
 
 
@@ -1152,13 +1239,13 @@ if run_btn:
 # ==============================================================================
 
 st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
-st.markdown("### 🖥️ Live Terminal Log (Thời Gian Thực)")
+st.markdown("### TERMINAL LOG (THỜI GIAN THỰC)")
 
 log_head_col, log_btn_col = st.columns([8, 2])
 with log_head_col:
     st.caption("Hiển thị 80 dòng log hoạt động gần nhất của hệ thống.")
 with log_btn_col:
-    if st.button("🔄 Làm mới Log", use_container_width=True):
+    if st.button("Làm mới Log", use_container_width=True):
         st.rerun()
 
 recent_logs = read_latest_logs(max_lines=80)
