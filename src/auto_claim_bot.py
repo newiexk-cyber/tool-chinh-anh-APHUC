@@ -93,7 +93,7 @@ def run_claim_cycle(spreadsheet_id: str, sheet_name: str, staff_name: str, dry_r
 
     row_numbers = [r["row"] for r in unassigned_rows]
     names = [r["ten_khach"] for r in unassigned_rows]
-    logger.info(f"⚡ [PHÁT HIỆN ĐƠN MỚI] Có {len(row_numbers)} đơn chưa có người nhận: {names}")
+    logger.info(f"[PHAT HIEN DON MOI] Co {len(row_numbers)} don chua co nguoi nhan: {names}")
 
     res = assign_staff(
         spreadsheet_id=spreadsheet_id,
@@ -105,12 +105,12 @@ def run_claim_cycle(spreadsheet_id: str, sheet_name: str, staff_name: str, dry_r
     )
 
     if res.get("success"):
-        mode_str = "[TEST - DRY_RUN]" if dry_run else "[THẬT TRÊN SHEET]"
-        logger.info(f"✅ {mode_str} Đã tự động điền '{staff_name}' vào Cột O cho các Row: {row_numbers}!")
+        mode_str = "[TEST - DRY_RUN]" if dry_run else "[THAT TREN SHEET]"
+        logger.info(f"{mode_str} Da tu dong dien '{staff_name}' vao Cot O cho cac Row: {row_numbers}!")
         for r in unassigned_rows:
-            print(f"  👉 ĐÃ NHẬN: Row {r['row']} - Khách: {r['ten_khach']} (SL: {r.get('sl_hinh_chon', 0)} ảnh)")
+            print(f"  [DA NHAN] Row {r['row']} - Khach: {r['ten_khach']} (SL: {r.get('sl_hinh_chon', 0)} anh)")
     else:
-        logger.error(f"❌ Lỗi nhận việc: {res.get('error')}")
+        logger.error(f"[LOI] Loi nhan viec: {res.get('error')}")
 
     return len(row_numbers)
 
@@ -122,16 +122,16 @@ def main():
     parser.add_argument("--staff", type=str, default=DEFAULT_STAFF, help="Tên nhân viên điền vào (vd: PHÚC)")
     args = parser.parse_args()
 
-    mode_txt = "🛡️ DRY_RUN (An Toàn - Không ghi thật)" if args.dry_run else "🔥 PRODUCTION (GHI THẬT VÀO SHEET)"
+    mode_txt = "[DRY_RUN - AN TOAN]" if args.dry_run else "[PRODUCTION - GHI VAO SHEET]"
     print("=" * 75)
-    print("⚡ BOT TỰ ĐỘNG NHẬN ĐƠN CHO PHÚC (AUTO-CLAIM BOT - QUÉT CẢ 2 BẢNG)")
+    print("BOT TU DONG NHAN DON CHO PHUC (AUTO-CLAIM BOT - QUET CA 2 BANG)")
     for s in DEFAULT_SHEETS:
-        print(f"• Bảng: {s['name']} (ID: {s['id']}) | Tab: {s['tab']}")
-    print(f"• Nhân viên: {args.staff}")
-    print(f"• Chế độ: {mode_txt}")
-    print(f"• Chu kỳ quét: Mỗi {args.interval} giây")
+        print(f"- Bang: {s['name']} (ID: {s['id']}) | Tab: {s['tab']}")
+    print(f"- Nhan vien: {args.staff}")
+    print(f"- Che do: {mode_txt}")
+    print(f"- Chu ky quet: Moi {args.interval} giay")
     print("=" * 75)
-    print("Bot đang chạy ngầm... Nhấn Ctrl + C để dừng.\n")
+    print("Bot dang chay lien tuc 24/24... Nhan Ctrl + C de dung.\n")
 
     while True:
         try:
@@ -158,7 +158,7 @@ def main():
                 total_claimed += claimed
 
             if total_claimed > 0:
-                print(f"\n[{now_str}] 🎉 Vừa tự động nhận thành công {total_claimed} đơn mới!")
+                print(f"\n[{now_str}] Vua tu dong nhan thanh cong {total_claimed} don moi!")
             time.sleep(args.interval)
         except KeyboardInterrupt:
             print("\n[-] Bot đã tạm dừng.")
