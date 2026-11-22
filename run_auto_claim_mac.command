@@ -39,7 +39,7 @@ echo "[*] Python dang dung: $($PY_EXEC --version) tai $PY_EXEC"
 # Cai bang "$PY_EXEC -m pip" de chac chan cai vao DUNG ban Python dang chay bot.
 if ! "$PY_EXEC" -c "from google.oauth2 import service_account; from googleapiclient.discovery import build" &>/dev/null; then
     echo "[*] Dang cai dat thu vien ket noi Google Sheet & Drive vao $PY_EXEC ..."
-    "$PY_EXEC" -m pip install --upgrade google-auth google-api-python-client google-auth-httplib2 google-auth-oauthlib
+    "$PY_EXEC" -m pip install --only-binary :all: "google-auth==2.29.0" "google-api-python-client==2.125.0" "google-auth-httplib2==0.2.0" "google-auth-oauthlib==1.2.0"
     if ! "$PY_EXEC" -c "from google.oauth2 import service_account; from googleapiclient.discovery import build"; then
         echo "[!] Cai thu vien Google that bai. Kiem tra ket noi mang roi chay lai."
         read -p "Nhan Enter de thoat..."
