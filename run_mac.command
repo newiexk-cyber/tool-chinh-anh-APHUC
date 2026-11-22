@@ -19,9 +19,9 @@ if command -v xattr &>/dev/null; then
     xattr -dr com.apple.quarantine . 2>/dev/null || true
 fi
 
-# 2. Tim kiem Python 3 san co (Python 3.9 tro len)
+# 2. Tim kiem Python 3 san co (Python 3.8 tro len)
 PY_BIN=""
-for candidate in python3 /usr/local/bin/python3 /opt/homebrew/bin/python3 $(which python3 2>/dev/null); do
+for candidate in /usr/local/bin/python3 python3 /opt/homebrew/bin/python3 $(which python3 2>/dev/null); do
     if [ -x "$candidate" ] && "$candidate" -c "import sys; exit(0 if sys.version_info >= (3, 8) else 1)" 2>/dev/null; then
         PY_BIN="$candidate"
         break
@@ -31,13 +31,7 @@ done
 if [ -z "$PY_BIN" ]; then
     echo "========================================================================"
     echo "   [!] CHUA PHAT HIEN PYTHON 3.8+ TREN MACOS CATALINA."
-    echo ""
-    echo "   Doi voi MacBook Pro 2017 (macOS 10.15.7), cach cai de nhat la:"
-    echo "   1. Tai ban cai Python chinh thuc (ban dung cho macOS 10.9 tro len):"
-    echo "      https://www.python.org/ftp/python/3.11.9/python-3.11.9-macos11.pkg"
-    echo "   2. Cai xong thi mo lai file run_mac.command nay la se chay ngay!"
     echo "========================================================================"
-    echo ""
     read -p "Nhan Enter de dong cua so nay..."
     exit 1
 fi
@@ -54,10 +48,17 @@ fi
 VENV_PY="$VENV_DIR/bin/python"
 VENV_PIP="$VENV_DIR/bin/pip"
 
-# 4. Kiem tra va cai dat thu vien
-echo "[3/3] Dang kiem tra thu vien requirements..."
+# 4. Kiem tra va cai dat thu vien voi prebuilt wheel cho macOS Catalina Intel
+echo "[3/3] Dang kiem tra thu vien requirements (toi uu cho macOS Catalina)..."
 "$VENV_PIP" install --upgrade pip -q
-"$VENV_PIP" install -r requirements.txt -q
+
+# Cai dat pyarrow phien ban prebuilt wheel 15.0.2 truoc de khong bi loi bien dich Rust/libcst
+if [ "$(uname -s)" = "Darwin" ] && [ "$(uname -m)" = "x86_64" ]; then
+    "$VENV_PIP" install "pyarrow==15.0.2" -q || true
+    "$VENV_PIP" install "streamlit<=1.38.0" -q || true
+fi
+
+"$VENV_PIP" install -r requirements.txt --prefer-binary -q
 
 echo ""
 echo "========================================================================"

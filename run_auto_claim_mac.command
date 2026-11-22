@@ -20,26 +20,20 @@ echo "========================================================================"
 echo ""
 
 VENV_DIR=".venv"
-if [ -f "$VENV_DIR/bin/python" ]; then
-    PY_EXEC="$VENV_DIR/bin/python"
-else
-    # Tim Python 3 neu chua chay run_mac.command
-    PY_CANDIDATE=""
-    for candidate in python3 /usr/local/bin/python3 /opt/homebrew/bin/python3 $(which python3 2>/dev/null); do
-        if [ -x "$candidate" ] && "$candidate" -c "import sys; exit(0 if sys.version_info >= (3, 8) else 1)" 2>/dev/null; then
-            PY_CANDIDATE="$candidate"
-            break
-        fi
-    done
-
-    if [ -n "$PY_CANDIDATE" ]; then
-        PY_EXEC="$PY_CANDIDATE"
-    else
-        echo "[!] Chua phat hien Python 3 tren may. Vui long mo run_mac.command truoc de cai dat!"
-        read -p "Nhan Enter de thoat..."
-        exit 1
-    fi
+# Neu chua co venv hoac venv bi thieu, tao venv nhanh
+if [ ! -d "$VENV_DIR" ] || [ ! -f "$VENV_DIR/bin/python" ]; then
+    echo "[*] Khoi tao moi truong ao .venv..."
+    /usr/local/bin/python3 -m venv "$VENV_DIR" || python3 -m venv "$VENV_DIR"
 fi
 
-echo "[*] Bot dang chay lien tuc 24/24..."
+PY_EXEC="$VENV_DIR/bin/python"
+PIP_EXEC="$VENV_DIR/bin/pip"
+
+# Kiem tra xem da co google module trong venv chua
+if ! "$PY_EXEC" -c "import google.auth, googleapiclient" &>/dev/null; then
+    echo "[*] Dang cai dat thu vien ket noi Google cho bot..."
+    "$PIP_EXEC" install google-api-python-client google-auth google-auth-httplib2 google-auth-oauthlib -q
+fi
+
+echo "[*] Bot da san sang va dang chay lien tuc 24/24..."
 exec "$PY_EXEC" src/auto_claim_bot.py --interval 30
