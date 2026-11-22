@@ -34,7 +34,16 @@ except ImportError:
 
 
 def pick_folder_dialog(current_path: str = "") -> str:
-    """Mở hộp thoại chọn thư mục chuẩn OS trên Windows hoặc macOS khi chạy local."""
+    """Mở hộp thoại chọn thư mục chuẩn OS trên Windows hoặc macOS (dùng AppleScript trên Mac để tránh crash Tkinter trên macOS cũ)."""
+    if sys.platform == "darwin":
+        try:
+            import subprocess
+            cmd = """osascript -e 'tell application "Finder" to activate' -e 'POSIX path of (choose folder with prompt "Chọn thư mục lưu ảnh:")'"""
+            res = subprocess.check_output(cmd, shell=True, text=True, stderr=subprocess.DEVNULL).strip()
+            if res:
+                return res
+        except Exception:
+            pass
     try:
         import tkinter as tk
         from tkinter import filedialog
