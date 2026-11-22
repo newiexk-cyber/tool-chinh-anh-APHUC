@@ -288,7 +288,14 @@ def get_sheets_service(credentials_path: Optional[Path | str] = None) -> Any:
         "https://www.googleapis.com/auth/drive",
     ]
 
-    # Hỗ trợ đọc từ Streamlit Secrets khi deploy lên Streamlit Community Cloud
+    # Ưu tiên tuyệt đối đọc file credentials.json trên ổ đĩa local trước
+    if credentials_path.exists() and credentials_path.is_file():
+        creds = service_account.Credentials.from_service_account_file(
+            str(credentials_path), scopes=scopes
+        )
+        return build("sheets", "v4", credentials=creds)
+
+    # Nếu không có file local, hỗ trợ đọc từ Streamlit Secrets khi chạy trên Streamlit Cloud
     try:
         import streamlit as st
         if hasattr(st, "secrets") and "gcp_service_account" in st.secrets:
@@ -299,13 +306,7 @@ def get_sheets_service(credentials_path: Optional[Path | str] = None) -> Any:
     except Exception:
         pass
 
-    if not credentials_path.exists():
-        raise FileNotFoundError(f"Không tìm thấy file credentials tại: {credentials_path.resolve()}")
-
-    creds = service_account.Credentials.from_service_account_file(
-        str(credentials_path), scopes=scopes
-    )
-    return build("sheets", "v4", credentials=creds)
+    raise FileNotFoundError(f"Không tìm thấy file credentials tại: {credentials_path.resolve()}")
 
 
 def load_sheet_data(

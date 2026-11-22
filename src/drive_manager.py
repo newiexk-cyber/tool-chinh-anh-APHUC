@@ -178,7 +178,14 @@ def get_drive_service(credentials_path: Optional[Path | str] = None) -> Any:
         "https://www.googleapis.com/auth/spreadsheets",
     ]
 
-    # Hỗ trợ đọc từ Streamlit Secrets khi deploy lên Streamlit Community Cloud
+    # Ưu tiên tuyệt đối đọc file credentials.json trên ổ đĩa local trước
+    if credentials_path.exists() and credentials_path.is_file():
+        creds = service_account.Credentials.from_service_account_file(
+            str(credentials_path), scopes=scopes
+        )
+        return build("drive", "v3", credentials=creds)
+
+    # Nếu không có file local, hỗ trợ đọc từ Streamlit Secrets khi chạy trên Streamlit Cloud
     try:
         import streamlit as st
         if hasattr(st, "secrets") and "gcp_service_account" in st.secrets:
@@ -191,11 +198,6 @@ def get_drive_service(credentials_path: Optional[Path | str] = None) -> Any:
 
     if not credentials_path.exists():
         raise FileNotFoundError(f"Không tìm thấy file credentials tại: {credentials_path.resolve()}")
-
-    creds = service_account.Credentials.from_service_account_file(
-        str(credentials_path), scopes=scopes
-    )
-    return build("drive", "v3", credentials=creds)
 
 
 def get_customer_parent_day(service: Any, customer_folder_id: str) -> str:
