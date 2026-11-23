@@ -126,28 +126,31 @@ def main():
     print("=" * 75)
     print("BOT TU DONG NHAN DON CHO PHUC (AUTO-CLAIM BOT - QUET CA 2 BANG)")
     for s in DEFAULT_SHEETS:
-        print(f"- Bang: {s['name']} (ID: {s['id']}) | Tab: {s['tab']}")
+        print(f"- Bang: {s['name']} (ID: {s['id']}) | Tab: Tu dong chon thang moi nhat")
     print(f"- Nhan vien: {args.staff}")
     print(f"- Che do: {mode_txt}")
     print(f"- Chu ky quet: Moi {args.interval} giay")
     print("=" * 75)
     print("Bot dang chay lien tuc 24/24... Nhan Ctrl + C de dung.\n")
 
+    cred_path = ROOT_DIR / "config" / "credentials.json"
+
     while True:
         try:
             now_str = time.strftime("%H:%M:%S %d/%m/%Y")
             total_claimed = 0
             for s_info in DEFAULT_SHEETS:
-                scan_text = f"[{now_str}] Đang quét bảng '{s_info['name']}'..."
-                print(scan_text.ljust(85), end="\r")
                 # Tự động lấy tab tháng mới nhất nếu có
-                current_tab = s_info.get("tab", "THÁNG 10/2026")
+                current_tab = s_info.get("tab", "THÁNG 11/2026")
                 try:
-                    all_tabs = get_spreadsheet_sheet_names(s_info["id"])
+                    all_tabs = get_spreadsheet_sheet_names(s_info["id"], credentials_path=cred_path)
                     if all_tabs:
                         current_tab = all_tabs[0]
                 except Exception:
                     pass
+
+                scan_text = f"[{now_str}] Dang quet '{s_info['name']}' [{current_tab}]..."
+                print(scan_text.ljust(90), end="\r")
 
                 claimed = run_claim_cycle(
                     spreadsheet_id=s_info["id"],

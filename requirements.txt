@@ -1,20 +1,32 @@
+# macOS Intel (Catalina 10.15+) - prebuilt binary wheels verified for Python 3.11 (zero Rust/C compilation)
+numpy==1.26.4; sys_platform == 'darwin' and platform_machine == 'x86_64'
+pandas==2.2.2; sys_platform == 'darwin' and platform_machine == 'x86_64'
 pyarrow==15.0.2; sys_platform == 'darwin' and platform_machine == 'x86_64'
-streamlit>=1.30.0,<=1.38.0; sys_platform == 'darwin' and platform_machine == 'x86_64'
-streamlit>=1.30.0; sys_platform != 'darwin' or platform_machine != 'x86_64'
-pandas>=2.0.0
-# Google libs: ban da xac nhan chay duoc tren macOS Catalina 10.15 Intel (Python 3.11, chi dung wheel dung san)
+pillow==10.4.0; sys_platform == 'darwin' and platform_machine == 'x86_64'
+watchdog==4.0.2; sys_platform == 'darwin' and platform_machine == 'x86_64'
+protobuf==4.25.5; sys_platform == 'darwin' and platform_machine == 'x86_64'
+tornado==6.4.1; sys_platform == 'darwin' and platform_machine == 'x86_64'
+rpds-py==0.20.0; sys_platform == 'darwin' and platform_machine == 'x86_64'
+MarkupSafe==2.1.5; sys_platform == 'darwin' and platform_machine == 'x86_64'
+streamlit==1.38.0; sys_platform == 'darwin' and platform_machine == 'x86_64'
 google-auth==2.29.0; sys_platform == 'darwin' and platform_machine == 'x86_64'
 google-api-python-client==2.125.0; sys_platform == 'darwin' and platform_machine == 'x86_64'
 google-auth-httplib2==0.2.0; sys_platform == 'darwin' and platform_machine == 'x86_64'
 google-auth-oauthlib==1.2.0; sys_platform == 'darwin' and platform_machine == 'x86_64'
-google-auth>=2.20.0; sys_platform != 'darwin' or platform_machine != 'x86_64'
+
+# Windows / Apple Silicon / Linux (Streamlit Cloud)
+streamlit>=1.30.0; sys_platform != 'darwin' or platform_machine != 'x86_64'
+pandas>=2.0.0; sys_platform != 'darwin' or platform_machine != 'x86_64'
+pillow>=10.0.0; sys_platform != 'darwin' or platform_machine != 'x86_64'
+watchdog>=3.0.0; sys_platform != 'darwin' or platform_machine != 'x86_64'
 google-api-python-client>=2.100.0; sys_platform != 'darwin' or platform_machine != 'x86_64'
+google-auth>=2.20.0; sys_platform != 'darwin' or platform_machine != 'x86_64'
 google-auth-httplib2>=0.2.0; sys_platform != 'darwin' or platform_machine != 'x86_64'
 google-auth-oauthlib>=1.1.0; sys_platform != 'darwin' or platform_machine != 'x86_64'
+
+# Common & Windows-only desktop automation
 python-dotenv>=1.0.0
-pillow>=10.0.0
-watchdog>=3.0.0
-pyperclip>=1.8.2
-pyautogui>=0.9.54; sys_platform == 'win32' or sys_platform == 'darwin'
+pyperclip>=1.8.2; sys_platform == 'win32'
+pyautogui>=0.9.54; sys_platform == 'win32'
 pywinauto>=0.6.8; sys_platform == 'win32'
 pytest>=8.0.0

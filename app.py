@@ -1188,8 +1188,8 @@ if run_btn:
                                         dry_run=False,
                                     )
                                     mark_done(
-                                        spreadsheet_id=sheet_url_input,
-                                        sheet_name=sheet_name_input,
+                                        spreadsheet_id=task["cust"].get("spreadsheet_id", DEFAULT_BRANCHES[0]["spreadsheet_id"]),
+                                        sheet_name=task["cust"].get("sheet_name", sheet_name_input),
                                         row_number=task["row_id"],
                                         dry_run=False,
                                         credentials_path=credentials_file,

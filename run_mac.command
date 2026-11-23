@@ -1,72 +1,89 @@
 #!/bin/bash
 # ==============================================================================
-# MUNCI STUDIO | macOS ONE-CLICK LAUNCHER & ENVIRONMENT SETUP
-# Tương thích 100% macOS Catalina 10.15 (MacBook Pro 2017 Intel Core i5)
-# và tất cả các dòng macOS khác (Sonoma, Sequoia, Ventura, Monterey, Big Sur)
+# MUNCI STUDIO | macOS ONE-CLICK LAUNCHER (WEB DASHBOARD & STEP 3)
+# Tuong thich 100% macOS Catalina 10.15 (Intel Core i5) & Apple Silicon M1/M2/M3/M4
 # ==============================================================================
 
-set -e
 cd "$(dirname "$0")"
 
 echo "========================================================================"
 echo "   MUNCI STUDIO | AUTO RETOUCH & DRIVE WORKFLOW"
-echo "   Dang kiem tra cau hinh macOS Catalina 10.15 (Intel Core i5)..."
+echo "   Dang khoi dong tren macOS ($(uname -m))..."
 echo "========================================================================"
 echo ""
 
-# 1. Tu dong go bo quarantine tren macOS Catalina
+# 1. Go bo co quarantine & thu muc .streamlit cu (tranh doc key cu)
 if command -v xattr &>/dev/null; then
     xattr -dr com.apple.quarantine . 2>/dev/null || true
 fi
+if [ -f ".streamlit/secrets.toml" ]; then
+    rm -rf ".streamlit"
+fi
 
-# 2. Tim kiem Python 3 san co (Python 3.8 tro len)
+# 2. Tim Python 3.8+ (uu tien ban cai chinh thuc /usr/local/bin/python3 tren Catalina)
 PY_BIN=""
-for candidate in /usr/local/bin/python3 python3 /opt/homebrew/bin/python3 $(which python3 2>/dev/null); do
-    if [ -x "$candidate" ] && "$candidate" -c "import sys; exit(0 if sys.version_info >= (3, 8) else 1)" 2>/dev/null; then
+for candidate in /usr/local/bin/python3 /opt/homebrew/bin/python3 "$(command -v python3 2>/dev/null)"; do
+    if [ -n "$candidate" ] && [ -x "$candidate" ] && "$candidate" -c "import sys; exit(0 if sys.version_info >= (3, 8) else 1)" 2>/dev/null; then
         PY_BIN="$candidate"
         break
     fi
 done
 
 if [ -z "$PY_BIN" ]; then
-    echo "========================================================================"
-    echo "   [!] CHUA PHAT HIEN PYTHON 3.8+ TREN MACOS CATALINA."
-    echo "========================================================================"
-    read -p "Nhan Enter de dong cua so nay..."
+    echo "[!] Chua tim thay Python 3.8+ tren may Mac."
+    echo "    Vui long cai Python 3.11.9 tai:"
+    echo "    https://www.python.org/ftp/python/3.11.9/python-3.11.9-macos11.pkg"
+    echo ""
+    read -p "Nhan Enter de dong..."
     exit 1
 fi
 
-echo "[1/3] Phat hien Python: $($PY_BIN --version) tai $PY_BIN"
+echo "[1/3] Python: $($PY_BIN --version) ($PY_BIN)"
 
-# 3. Tao Virtual Environment (.venv) doc lap cho may Mac
+# 3. Tao moi truong ao .venv dung chung cho ca Dashboard va Bot Auto-Claim
 VENV_DIR=".venv"
-if [ ! -d "$VENV_DIR" ] || [ ! -f "$VENV_DIR/bin/python" ]; then
-    echo "[2/3] Dang khoi tao moi truong ao (.venv) lan dau tien tren Mac..."
-    "$PY_BIN" -m venv "$VENV_DIR"
+if [ ! -x "$VENV_DIR/bin/python" ]; then
+    echo "[2/3] Dang tao moi truong ao (.venv) lan dau..."
+    "$PY_BIN" -m venv "$VENV_DIR" || {
+        echo "[!] Loi tao .venv. Hay chay lai hoac kiem tra Python."
+        read -p "Nhan Enter de dong..."
+        exit 1
+    }
 fi
 
 VENV_PY="$VENV_DIR/bin/python"
 VENV_PIP="$VENV_DIR/bin/pip"
 
-# 4. Kiem tra va cai dat thu vien voi prebuilt wheel cho macOS Catalina Intel
-echo "[3/3] Dang kiem tra thu vien requirements (toi uu cho macOS Catalina)..."
-"$VENV_PIP" install --upgrade pip -q
-
-# Cai dat pyarrow phien ban prebuilt wheel 15.0.2 truoc de khong bi loi bien dich Rust/libcst
-if [ "$(uname -s)" = "Darwin" ] && [ "$(uname -m)" = "x86_64" ]; then
-    "$VENV_PIP" install "pyarrow==15.0.2" -q || true
-    "$VENV_PIP" install "streamlit<=1.38.0" -q || true
+# 4. Kiem tra & cai thu vien (chi dung wheel dung san tren Catalina Intel)
+if ! "$VENV_PY" -c "import streamlit, pandas; from google.oauth2 import service_account; from googleapiclient.discovery import build" 2>/dev/null; then
+    echo "[3/3] Dang cai dat thu vien lan dau (mat khoang 30-60 giay)..."
+    "$VENV_PIP" install --upgrade pip -q 2>/dev/null || true
+    if [ "$(uname -s)" = "Darwin" ] && [ "$(uname -m)" = "x86_64" ]; then
+        "$VENV_PIP" install --only-binary :all: -r requirements.txt || {
+            echo "[!] Cai thu vien that bai. Kiem tra ket noi mang roi thu lai."
+            read -p "Nhan Enter de dong..."
+            exit 1
+        }
+    else
+        "$VENV_PIP" install --prefer-binary -r requirements.txt || {
+            echo "[!] Cai thu vien that bai. Kiem tra ket noi mang roi thu lai."
+            read -p "Nhan Enter de dong..."
+            exit 1
+        }
+    fi
+else
+    echo "[3/3] Thu vien da san sang."
 fi
-
-"$VENV_PIP" install -r requirements.txt --prefer-binary -q
 
 echo ""
 echo "========================================================================"
-echo "   HE THONG DA SAN SANG! DANG KHOI DONG STREAMLIT WEB..."
-echo "   Dia chi truy cap: http://localhost:8501"
+echo "   HE THONG DA SAN SANG! DANG MO TRINH DUYET..."
+echo "   Dia chi: http://localhost:8501"
 echo "   Nhan Ctrl + C trong cua so nay de dung."
 echo "========================================================================"
 echo ""
 
-# Toi uu tai nguyen cho Core i5 2017: tat watcher nang
-exec "$VENV_DIR/bin/streamlit" run app.py --server.headless=false --server.fileWatcherType=none --browser.gatherUsageStats=false
+"$VENV_PY" -m streamlit run app.py --server.headless=false --server.fileWatcherType=none --browser.gatherUsageStats=false
+
+echo ""
+read -p "Chuong trinh da dung. Nhan Enter de dong cua so..."

@@ -154,3 +154,25 @@ def test_mark_done_in_memory():
     updated = mark_done_in_memory(rows, row_num)
     target = next(r for r in updated if r["row"] == row_num)
     assert target["trang_thai"] == "DONE"
+
+
+def test_get_spreadsheet_sheet_names_prioritizes_newest_month_tab(monkeypatch):
+    from unittest.mock import MagicMock
+    from src import sheet_manager
+
+    mock_service = MagicMock()
+    mock_service.spreadsheets.return_value.get.return_value.execute.return_value = {
+        "sheets": [
+            {"properties": {"title": "Câu trả lời biểu mẫu 1"}},
+            {"properties": {"title": "THÁNG 10/2026"}},
+            {"properties": {"title": "THÁNG 11/2026"}},
+            {"properties": {"title": "THÁNG 09/2026"}},
+        ]
+    }
+    monkeypatch.setattr(sheet_manager, "get_sheets_service", lambda *a, **kw: mock_service)
+
+    tabs = sheet_manager.get_spreadsheet_sheet_names("dummy_id")
+    assert tabs[0] == "THÁNG 11/2026"
+    assert tabs[1] == "THÁNG 10/2026"
+    assert tabs[2] == "THÁNG 09/2026"
+    assert tabs[3] == "Câu trả lời biểu mẫu 1"

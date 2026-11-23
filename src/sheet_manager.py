@@ -3,7 +3,7 @@ import re
 import time
 from pathlib import Path
 from typing import Any, Optional
-from src.utils import normalize_vn, get_logger, check_has_credentials
+from src.utils import normalize_vn, strip_accents, get_logger, check_has_credentials
 
 logger = get_logger("sheet_manager")
 
@@ -259,11 +259,18 @@ def get_spreadsheet_sheet_names(
             if s.get("properties", {}).get("title")
         ]
         if sheet_titles:
-            # Lọc các tab có chữ 'THÁNG'
-            month_tabs = [t for t in sheet_titles if "THANG" in normalize_vn(t).upper()]
+            # Lọc các tab có chữ 'THÁNG' (dùng strip_accents để khớp cả 'THÁNG' và 'THANG')
+            month_tabs = [t for t in sheet_titles if "THANG" in strip_accents(t)]
             other_tabs = [t for t in sheet_titles if t not in month_tabs]
-            # Đảo ngược thứ tự để tab tháng tạo sau cùng (mới nhất) nằm lên đầu
-            month_tabs.reverse()
+
+            def _month_sort_key(title: str) -> tuple[int, int]:
+                m = re.search(r"(\d{1,2})\s*[/\-]\s*(\d{4})", title)
+                if m:
+                    return (int(m.group(2)), int(m.group(1)))
+                return (0, 0)
+
+            # Sắp xếp giảm dần theo (năm, tháng) để tháng mới nhất luôn đứng đầu
+            month_tabs.sort(key=_month_sort_key, reverse=True)
             return month_tabs + other_tabs
     except Exception as e:
         logger.debug(f"Không thể lấy danh sách tab từ Google Sheet: {e}")
