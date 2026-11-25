@@ -50,6 +50,34 @@ DEFAULT_SHEETS = [
 DEFAULT_STAFF = "PHÚC"
 
 
+def is_claimable_row(r: dict) -> bool:
+    """
+    Kiểm tra 1 dòng trên Google Sheet có hợp lệ để Bot tự động nhận việc (điền Cột O) hay không:
+    - Có tên khách hợp lệ (bỏ qua dòng trống, tiêu đề, OFF, MẪU).
+    - Cột O (Nhân viên) đang TRỐNG (chưa có ai nhận).
+    - Chưa hoàn tất (không chứa 'DONE').
+    - Đã có trạng thái bất kỳ ở Cột I (ĐÃ CHỌN, ĐÃ CHỈNH, hoặc trạng thái khác) HOẶC SL hình chọn > 0.
+    - Không bắt buộc phải gắn sẵn link Drive mới được nhận đơn.
+    """
+    name = strip_accents(r.get("ten_khach", ""))
+    if not name or name in ["TEN KHACH", "OFF", "-", "MAU", "0FF"] or name.startswith("MAU "):
+        return False
+
+    cur_staff = strip_accents(r.get("nhan_vien", ""))
+    if cur_staff != "":
+        return False
+
+    status = strip_accents(r.get("trang_thai", ""))
+    if "DONE" in status:
+        return False
+
+    sl_hinh = int(r.get("sl_hinh_chon", 0) or 0)
+    if sl_hinh <= 0 and not status:
+        return False
+
+    return True
+
+
 def run_claim_cycle(spreadsheet_id: str, sheet_name: str, staff_name: str, dry_run: bool) -> int:
     """
     Quét 1 vòng kiểm tra và tự động nhận tất cả các đơn trống thỏa mãn trên 1 sheet.
@@ -64,29 +92,7 @@ def run_claim_cycle(spreadsheet_id: str, sheet_name: str, staff_name: str, dry_r
         only_eligible=False,
     )
 
-    unassigned_rows = []
-    for r in rows:
-        name = strip_accents(r.get("ten_khach", ""))
-        if not name or name in ["TEN KHACH", "OFF", "-", "MAU", "0FF"]:
-            continue
-
-        status = strip_accents(r.get("trang_thai", ""))
-        # BỎ QUA nếu đã hoàn tất (DONE) hoặc đã chỉnh xong (ĐÃ CHỈNH):
-        if "DONE" in status or "CHINH" in status:
-            continue
-
-        link = str(r.get("drive_link", "")).strip()
-        if not link:
-            continue
-
-        sl_hinh = int(r.get("sl_hinh_chon", 0) or 0)
-        is_selected = (sl_hinh > 0) or ("CHON" in status)
-        if not is_selected:
-            continue
-
-        cur_staff = strip_accents(r.get("nhan_vien", ""))
-        if cur_staff == "":
-            unassigned_rows.append(r)
+    unassigned_rows = [r for r in rows if is_claimable_row(r)]
 
     if not unassigned_rows:
         return 0

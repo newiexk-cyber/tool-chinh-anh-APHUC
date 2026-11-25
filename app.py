@@ -558,20 +558,17 @@ def fetch_and_filter_all_branches(
             )
             for r in raw_data:
                 name = strip_accents(r.get("ten_khach", ""))
-                if not name or name in ["TEN KHACH", "OFF", "-", "MAU"]:
+                if not name or name in ["TEN KHACH", "OFF", "-", "MAU", "0FF"] or name.startswith("MAU "):
                     continue
                 status = strip_accents(r.get("trang_thai", ""))
-                if "DONE" in status or "CHINH" in status:
-                    continue
-                link = str(r.get("drive_link", "")).strip()
-                if not link:
+                if "DONE" in status:
                     continue
                 sl = int(r.get("sl_hinh_chon", 0) or 0)
-                is_sel = (sl > 0) or ("CHON" in status)
-                if not is_sel:
+                if sl <= 0 and not status:
                     continue
                 cur_staff = strip_accents(r.get("nhan_vien", ""))
-                if cur_staff == target or cur_staff == "":
+                link = str(r.get("drive_link", "")).strip()
+                if cur_staff == "" or (cur_staff == target and link):
                     item = dict(r)
                     item["branch_id"] = b["id"]
                     item["branch_name"] = b["short_name"]
